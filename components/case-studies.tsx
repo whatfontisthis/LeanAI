@@ -2,10 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
-export function PricingSection() {
+export function CaseStudies() {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -30,7 +29,7 @@ export function PricingSection() {
         },
       });
 
-      // Animate cards with stagger
+      // Animate cards
       gsap.to(cardsRef.current?.children || [], {
         opacity: 1,
         y: 0,
@@ -47,45 +46,31 @@ export function PricingSection() {
     return () => ctx.revert();
   }, []);
 
-  const plans = [
+  const cases = [
     {
-      name: "스타터",
-      price: "문의",
-      features: ["프로세스 진단", "기본 리포트"],
-    },
-    {
-      name: "프로페셔널",
-      price: "문의",
-      features: ["프로세스 진단", "AI 솔루션 설계", "팀 교육"],
-    },
-    {
-      name: "엔터프라이즈",
-      price: "문의",
-      features: ["전체 서비스", "맞춤형 솔루션", "지속 지원"],
+      company: "콘텐츠 제작 회사",
+      result: "동영상 콘텐츠 원고 작성부터 영상 생성까지, 전부 자동화하다",
+      description:
+        "월 30개 콘텐츠 제작에 소요되던 시간을 90% 단축하고, 생성형 AI 기반 원고 작성과 n8n 자동화 워크플로우로 품질을 일관되게 유지하면서도 제작 속도를 3배 올렸습니다. 팀은 창의적인 기획과 감수에만 집중할 수 있게 되었습니다.",
     },
   ];
 
   return (
-    <section ref={sectionRef} id="pricing" className="py-20">
+    <section ref={sectionRef} id="case-studies" className="py-20">
       <div className="container mx-auto px-4">
         <h2 ref={titleRef} className="mb-12 text-center text-3xl font-bold text-foreground">
-          가격
+          사례연구
         </h2>
-        <div ref={cardsRef} className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {plans.map((plan, index) => (
-            <Card key={index} className="p-6">
-              <h3 className="mb-2 text-xl font-semibold text-foreground">
-                {plan.name}
+        <div ref={cardsRef} className="grid grid-cols-1 gap-6 md:grid-cols-1 lg:grid-cols-1">
+          {cases.map((caseStudy, index) => (
+            <Card key={index} className="p-8">
+              <h3 className="mb-3 text-xl font-semibold text-foreground">
+                {caseStudy.company}
               </h3>
-              <div className="mb-4 text-2xl font-bold text-accent">{plan.price}</div>
-              <ul className="mb-6 space-y-2">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="text-muted">
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Button className="w-full">문의하기</Button>
+              <p className="mb-4 text-lg font-semibold text-accent">
+                {caseStudy.result}
+              </p>
+              <p className="text-muted leading-relaxed">{caseStudy.description}</p>
             </Card>
           ))}
         </div>

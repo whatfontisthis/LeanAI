@@ -25,7 +25,6 @@ LeanAI는 스타트업과 중견기업을 대상으로 프로세스 진단부터
 ### 설치
 
 ```bash
-cd leanflow-site
 npm install
 ```
 
@@ -47,13 +46,12 @@ npm start
 ## 프로젝트 구조
 
 ```
-leanflow-site/
-├── app/              # Next.js App Router
-├── components/        # React 컴포넌트
-│   ├── ui/          # shadcn/ui 컴포넌트
-│   └── ...          # 페이지 컴포넌트
-├── lib/              # 유틸리티 함수
-└── public/           # 정적 파일
+app/              # Next.js App Router
+components/       # React 컴포넌트
+│   ├── ui/       # shadcn/ui 컴포넌트
+│   └── ...       # 페이지 컴포넌트
+lib/              # 유틸리티 함수
+public/           # 정적 파일
 ```
 
 ## 라이선스

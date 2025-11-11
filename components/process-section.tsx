@@ -1,6 +1,50 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
+
 export function ProcessSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Set initial states
+      gsap.set([titleRef.current, ...(stepsRef.current?.children || [])], {
+        opacity: 0,
+        y: 40,
+      });
+
+      // Animate title
+      gsap.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+      });
+
+      // Animate steps with stagger
+      gsap.to(stepsRef.current?.children || [], {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        stagger: 0.15,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+        },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const steps = [
     {
       number: "01",
@@ -29,12 +73,12 @@ export function ProcessSection() {
   ];
 
   return (
-    <section id="process" className="bg-surface py-20">
+    <section ref={sectionRef} id="process" className="bg-surface py-20">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+        <h2 ref={titleRef} className="mb-12 text-center text-3xl font-bold text-foreground">
           프로세스
         </h2>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div ref={stepsRef} className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
             <div key={index} className="text-center">
               <div className="mb-4 text-4xl font-bold text-accent">{step.number}</div>

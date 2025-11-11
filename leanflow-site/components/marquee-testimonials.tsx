@@ -2,7 +2,7 @@
 
 export function MarqueeTestimonials() {
   const testimonials = [
-    "LeanFlow와 함께한 변혁이 정말 인상적이었습니다.",
+    "LeanFlow와 함께한 변환이 정말 인상적이었습니다.",
     "AI 도입 과정이 체계적이고 전문적이었습니다.",
     "팀 교육이 실무에 바로 적용 가능했습니다.",
   ];
@@ -14,7 +14,7 @@ export function MarqueeTestimonials() {
           {[...testimonials, ...testimonials].map((testimonial, index) => (
             <div
               key={index}
-              className="flex-shrink-0 whitespace-nowrap text-lg text-foreground"
+              className="flex-shrink-0 whitespace-nowrap rounded-sm border border-border bg-background px-6 py-4 text-lg text-foreground shadow-sm"
             >
               {testimonial}
             </div>

@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
             <h3 className="mb-4 text-lg font-semibold text-foreground">LeanAI</h3>
-            <p className="text-sm text-muted">AX 변혁 파트너</p>
+            <p className="text-sm text-muted">AX 변환 파트너</p>
           </div>
           <div>
             <h4 className="mb-4 text-sm font-semibold text-foreground">서비스</h4>

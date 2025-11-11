@@ -41,10 +41,10 @@ export function MobileMenu({ onLoginClick, onSignupClick }: MobileMenuProps) {
               회사소개
             </Link>
             <div className="flex gap-2 pt-4">
-              <Button variant="ghost" size="sm" className="flex-1" onClick={onLoginClick}>
+              <Button variant="ghost" size="sm" className="flex-1">
                 로그인
               </Button>
-              <Button size="sm" className="flex-1" onClick={onSignupClick}>
+              <Button size="sm" className="flex-1">
                 문의하기
               </Button>
             </div>

@@ -36,10 +36,10 @@ export function Navbar() {
           </Link>
         </div>
         <div className="hidden items-center gap-4 md:flex">
-          <Button variant="outline" size="sm" onClick={() => setIsLoginModalOpen(true)}>
+          <Button variant="outline" size="sm">
             로그인
           </Button>
-          <Button size="sm" onClick={() => setIsSignupModalOpen(true)}>문의하기</Button>
+          <Button size="sm">문의하기</Button>
         </div>
         <MobileMenu 
           onLoginClick={() => setIsLoginModalOpen(true)} 

@@ -13,7 +13,7 @@ export function Navbar() {
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 z-40 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed top-0 z-[60] w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center">
           <Logo showSubheading={true} size="small" subheadingText="Your AX Partner" />
@@ -36,10 +36,10 @@ export function Navbar() {
           </Link>
         </div>
         <div className="hidden items-center gap-4 md:flex">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => setIsLoginModalOpen(true)}>
             로그인
           </Button>
-          <Button size="sm">문의하기</Button>
+          <Button size="sm" onClick={() => setIsSignupModalOpen(true)}>문의하기</Button>
         </div>
         <MobileMenu 
           onLoginClick={() => setIsLoginModalOpen(true)} 

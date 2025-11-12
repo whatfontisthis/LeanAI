@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   images: {
     unoptimized: true,
   },
-  basePath: '/LeanAI',
+  // basePath removed for Vercel deployment
   trailingSlash: true,
 };
 

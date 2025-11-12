@@ -7,6 +7,16 @@ export function MarqueeTestimonials() {
   const sectionRef = useRef<HTMLElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
 
+  // Mask middle character(s) in name
+  const maskName = (name: string) => {
+    if (name.length <= 2) return name;
+    const firstChar = name[0];
+    const lastChar = name[name.length - 1];
+    const middleLength = name.length - 2;
+    const masked = '*'.repeat(middleLength);
+    return `${firstChar}${masked}${lastChar}`;
+  };
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Set initial state
@@ -34,31 +44,31 @@ export function MarqueeTestimonials() {
       text: "LeanFlow와 함께한 변환이 정말 인상적이었습니다.",
       name: "김철수",
       avatar: "KS",
-      color: "bg-blue-500",
+      color: "bg-accent",
     },
     {
       text: "AI 도입 과정이 체계적이고 전문적이었습니다.",
       name: "이영희",
       avatar: "YH",
-      color: "bg-purple-500",
+      color: "bg-accent/90",
     },
     {
       text: "팀 교육이 실무에 바로 적용 가능했습니다.",
       name: "박민수",
       avatar: "MS",
-      color: "bg-green-500",
+      color: "bg-accent/80",
     },
     {
       text: "생산성이 크게 향상되었어요.",
       name: "정수진",
       avatar: "SJ",
-      color: "bg-pink-500",
+      color: "bg-accent/70",
     },
     {
       text: "AI 활용법을 제대로 배울 수 있었습니다.",
       name: "최동욱",
       avatar: "DW",
-      color: "bg-orange-500",
+      color: "bg-accent",
     },
   ];
 
@@ -83,19 +93,19 @@ export function MarqueeTestimonials() {
               {/* Speech Bubble */}
               <div className="relative bg-white border border-border rounded-2xl px-5 py-4 shadow-md max-w-xs">
                 {/* Quote mark */}
-                <div className="absolute -top-2 -left-2 text-4xl text-accent opacity-20 font-serif">"</div>
-                
-                <p className="text-sm text-foreground leading-relaxed relative z-10">
+                <div className="absolute top-1 left-2 text-3xl text-accent opacity-15 font-serif leading-none">"</div>
+
+                <p className="text-sm text-foreground leading-relaxed relative z-10 pt-2">
                   {testimonial.text}
                 </p>
-                
+
                 {/* Speech bubble tail pointing to avatar */}
                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2">
                   <div className="w-3 h-3 bg-white border-l border-b border-border transform rotate-45"></div>
                 </div>
-                
+
                 <div className="mt-2 text-xs text-muted font-medium">
-                  - {testimonial.name}
+                  - {maskName(testimonial.name)}
                 </div>
               </div>
             </div>

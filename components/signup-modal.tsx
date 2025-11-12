@@ -21,15 +21,41 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     startDate: "",
     inquiry: "",
   });
+  const [isRefining, setIsRefining] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
+      // Calculate scrollbar width
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // Prevent scrolling and add padding to prevent content shift
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+      // Also apply padding to fixed navbar
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = `${scrollbarWidth}px`;
+      }
     } else {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+
+      // Remove padding from navbar
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = "0px";
+      }
     }
     return () => {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+
+      // Cleanup navbar padding
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = "0px";
+      }
     };
   }, [isOpen]);
 
@@ -42,8 +68,43 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
     onClose();
   };
 
+  const handleRefineInquiry = async () => {
+    if (!formData.inquiry.trim()) {
+      alert("문의 내용을 먼저 입력해주세요.");
+      return;
+    }
+
+    setIsRefining(true);
+
+    try {
+      // Call our secure API route (API key stays on server)
+      const response = await fetch("/api/refine-inquiry", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inquiry: formData.inquiry
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to refine inquiry");
+      }
+
+      const data = await response.json();
+      const refinedText = data.refinedText || formData.inquiry;
+
+      setFormData({ ...formData, inquiry: refinedText });
+    } catch (error) {
+      console.error("Error refining inquiry:", error);
+      alert("문의 내용 다듬기에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
   const budgetOptions = [
-    "100만원 이하",
     "100~200만원",
     "200~300만원",
     "300~400만원",
@@ -60,11 +121,19 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto"
       onClick={onClose}
+      style={{
+        margin: 0,
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-lg shadow-lg border border-border p-8 max-h-[90vh] overflow-y-auto my-auto"
+        className="relative w-full max-w-4xl bg-white rounded-lg shadow-lg border border-border p-8 max-h-[90vh] overflow-y-auto my-auto z-[70]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -229,9 +298,21 @@ export function SignupModal({ isOpen, onClose }: SignupModalProps) {
 
           {/* Inquiry Text Area */}
           <div>
-            <label htmlFor="inquiry" className="block text-sm font-medium text-foreground mb-2">
-              상담 문의 내용
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label htmlFor="inquiry" className="block text-sm font-medium text-foreground">
+                상담 문의 내용
+              </label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRefineInquiry}
+                disabled={isRefining || !formData.inquiry.trim()}
+                className="text-xs"
+              >
+                {isRefining ? "다듬는 중..." : "✨ AI로 다듬기"}
+              </Button>
+            </div>
             <p className="text-xs text-muted mb-3">
               ※ 교육 목적 및 수강 대상을 포함해 상담을 원하는 내용을 구체적으로 작성해 주시면, 더욱 빠르고 정확하게 안내해 드릴 수 있습니다.
             </p>

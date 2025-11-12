@@ -26,19 +26,20 @@ export function FeaturesSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
+          toggleActions: "play reverse play reverse",
         },
       });
 
-      // Animate cards with stagger
+      // Animate cards together (no stagger)
       gsap.to(cardsRef.current?.children || [], {
         opacity: 1,
         y: 0,
-        duration: 0.6,
-        ease: "power1.out",
-        stagger: 0.2,
+        duration: 1.0,
+        ease: "power2.out",
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
+          toggleActions: "play reverse play reverse",
         },
       });
     }, sectionRef);

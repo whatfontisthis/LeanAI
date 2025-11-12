@@ -12,12 +12,37 @@ interface LoginModalProps {
 export function LoginModal({ isOpen, onClose }: LoginModalProps) {
   useEffect(() => {
     if (isOpen) {
+      // Calculate scrollbar width
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // Prevent scrolling and add padding to prevent content shift
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+      // Also apply padding to fixed navbar
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = `${scrollbarWidth}px`;
+      }
     } else {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+
+      // Remove padding from navbar
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = "0px";
+      }
     }
     return () => {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
+
+      // Cleanup navbar padding
+      const navbar = document.querySelector('nav');
+      if (navbar) {
+        navbar.style.paddingRight = "0px";
+      }
     };
   }, [isOpen]);
 
@@ -25,11 +50,19 @@ export function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed top-0 left-0 right-0 bottom-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
       onClick={onClose}
+      style={{
+        margin: 0,
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
     >
       <div
-        className="relative w-full max-w-md bg-white rounded-lg shadow-lg border border-border p-8"
+        className="relative w-full max-w-md bg-white rounded-lg shadow-lg border border-border p-8 z-[70]"
         onClick={(e) => e.stopPropagation()}
       >
         <button

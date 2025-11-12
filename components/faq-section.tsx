@@ -31,6 +31,7 @@ export function FAQSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
+          toggleActions: "play reverse play reverse",
         },
       });
 
@@ -43,6 +44,7 @@ export function FAQSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
+          toggleActions: "play reverse play reverse",
         },
       });
     }, sectionRef);

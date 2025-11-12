@@ -9,10 +9,17 @@ LeanFlow is a landing page for an AI automation and process transformation servi
 ## Tech Stack
 
 ### Core Framework
-- **Next.js 15** (App Router)
+- **Next.js 15** (App Router with Static Export)
 - **React 19**
 - **TypeScript**
 - **Node.js 18+**
+
+### Deployment Configuration
+- **Static Export**: `output: 'export'` in next.config.mjs
+- **Base Path**: Conditional basePath for GitHub Pages
+  - Development: No basePath (runs on `localhost:3000`)
+  - Production: `/LeanAI` basePath for GitHub Pages deployment
+- **Images**: `unoptimized: true` (required for static export)
 
 ### UI & Styling
 - **Tailwind CSS v4**
@@ -47,18 +54,24 @@ LeanFlow-landing-page/
 │   │   ├── separator.tsx
 │   │   ├── switch.tsx
 │   │   └── tabs.tsx
+│   ├── about-section.tsx
 │   ├── animated-headline.tsx
+│   ├── case-studies.tsx
 │   ├── faq-section.tsx
 │   ├── features-section.tsx
 │   ├── footer.tsx
 │   ├── hero-section.tsx
 │   ├── loading-screen.tsx
+│   ├── login-modal.tsx        # Login modal component
+│   ├── logo.tsx
 │   ├── marquee-testimonials.tsx
 │   ├── mobile-menu.tsx
 │   ├── navbar.tsx
 │   ├── page-wrapper.tsx
 │   ├── pricing-section.tsx
+│   ├── process-section.tsx
 │   ├── scroll-animated-testimonials.tsx
+│   ├── signup-modal.tsx       # Signup modal component
 │   ├── theme-provider.tsx
 │   ├── theme-toggle.tsx
 │   └── unicorn-studio-background.tsx
@@ -83,7 +96,7 @@ LeanFlow-landing-page/
   - Triggers main content visibility
 
 ### 2. Navigation Bar
-- **Position**: Fixed at top
+- **Position**: Fixed at top (z-index: 60)
 - **Functionality**:
   - Logo with link to home
   - Navigation menu items (desktop):
@@ -92,9 +105,32 @@ LeanFlow-landing-page/
     - 프로세스 (Process)
     - 사례연구 (Case Studies)
     - 회사소개 (About)
-  - CTA buttons: 로그인 (Login), 가입하기 (Sign Up)
+  - CTA buttons:
+    - 로그인 (Login) - Opens login modal
+    - 문의하기 (Inquiry) - Currently no functionality
   - Mobile menu (hamburger menu)
   - Smooth scroll to sections
+
+### 2.1. Login Modal
+- **Trigger**: Clicking '로그인' button in navbar
+- **Position**: Centered both horizontally and vertically on screen
+- **Z-Index Layering**:
+  - Modal overlay: z-50 (with blur effect)
+  - Navbar: z-60 (stays sharp, not blurred)
+  - Modal content: z-70 (on top of everything)
+- **Features**:
+  - Email and password input fields
+  - "로그인" button (currently no backend)
+  - "취소" button to close modal
+  - "회원가입" link (currently no functionality)
+  - Click outside modal to close
+  - Prevents page scrolling when open
+  - **Scrollbar Shift Prevention**: See "Common Issues & Solutions" section
+
+### 2.2. Signup Modal
+- **Trigger**: Clicking signup option in mobile menu
+- **Structure**: Similar to login modal
+- **Status**: Currently implemented but button not connected in desktop navbar
 
 ### 3. Hero Section
 - **Content**:
@@ -355,17 +391,39 @@ LeanFlow-landing-page/
 
 ### Build Commands
 ```bash
-npm run build    # Build for production
-npm start        # Start production server
-npm run dev      # Development server
+npm install      # Install dependencies
+npm run dev      # Development server (localhost:3000)
+npm run build    # Build for production (static export)
+npm run start    # Start production server (not applicable for static export)
 npm run lint     # Lint code
+npm run export   # Build static export (same as build)
 ```
 
-### Deployment Platforms
-- Vercel (recommended for Next.js)
-- Netlify
-- Railway
-- DigitalOcean App Platform
+### Current Deployment
+- **Platform**: GitHub Pages
+- **Configuration**: Static export with conditional basePath
+- **URL Structure**: `https://[username].github.io/LeanAI/`
+- **Limitations**:
+  - ❌ No API Routes (requires Node.js server)
+  - ❌ No Server-Side Rendering (SSR)
+  - ❌ No Middleware
+  - ❌ No Authentication backend
+  - ✅ Static HTML/CSS/JS only
+  - ✅ Client-side routing works
+  - ✅ Client-side state management works
+
+### Alternative Deployment Platforms (for full Next.js features)
+If you need API routes, authentication, or server-side features:
+- **Vercel** (recommended for Next.js) - Remove `output: 'export'`
+- **Netlify** - Remove `output: 'export'`
+- **Railway** - Remove `output: 'export'`
+- **AWS Amplify** - Remove `output: 'export'`
+
+### GitHub Pages Deployment
+Current workflow: `.github/workflows/nextjs.yml`
+- Builds static site on push to main
+- Deploys to GitHub Pages
+- Includes `.nojekyll` file to prevent Jekyll processing
 
 ## Browser Support
 
@@ -374,16 +432,116 @@ npm run lint     # Lint code
 - Safari (latest)
 - Edge (latest)
 
-## Next Steps for Rebuild
+## Common Issues & Solutions
 
-1. **Setup**: Install dependencies, verify project structure
-2. **Color System**: Define white/Navy(#0A1172) color palette in Tailwind config
-3. **Remove Theme System**: Remove theme toggle and provider (if not needed)
-4. **Update Styles**: Replace all color classes with white/Navy(#0A1172) equivalents
-5. **Simplify Design**: Remove complex styling, focus on clean white/Navy(#0A1172) design
-6. **Test Animations**: Ensure all animations work with new styling
-7. **Test Responsive**: Verify responsive behavior on all breakpoints
-8. **Content Review**: Verify all Korean content is accurate
-9. **Performance**: Optimize images and animations
-10. **Deploy**: Deploy to production platform
+### Modal Scrollbar Shift Bug
+
+**Problem**: When opening a modal (like login modal), content shifts to the right causing a glitchy appearance.
+
+**Root Cause**:
+1. When modal opens, `overflow: hidden` is applied to body to prevent background scrolling
+2. This hides the scrollbar (~15px wide)
+3. Browser shifts content right to fill the freed-up space
+4. Result: Visible content jump
+
+**Solution**: Add padding equal to scrollbar width when hiding scrollbar
+
+```tsx
+// In modal component's useEffect:
+const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+// When modal opens:
+document.body.style.overflow = "hidden";
+document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+// Also apply to fixed elements (navbar):
+const navbar = document.querySelector('nav');
+if (navbar) {
+  navbar.style.paddingRight = `${scrollbarWidth}px`;
+}
+
+// When modal closes:
+document.body.style.overflow = "unset";
+document.body.style.paddingRight = "0px";
+navbar.style.paddingRight = "0px";
+```
+
+**Why This Works**:
+- Scrollbar width calculation: `window.innerWidth - document.documentElement.clientWidth`
+- Padding replaces the space the scrollbar occupied
+- Fixed elements (navbar) need explicit padding since they don't inherit body styles
+- Content stays in place = no visual shift
+
+**Implementation Location**: `components/login-modal.tsx` lines 13-47
+
+---
+
+### Development 404 Error
+
+**Problem**: After running `npm run dev`, visiting `localhost:3000` shows 404.
+
+**Root Cause**: `basePath: '/LeanAI'` in next.config.mjs applies to all environments, requiring `localhost:3000/LeanAI/`
+
+**Solution**: Make basePath conditional
+```js
+basePath: process.env.NODE_ENV === 'production' ? '/LeanAI' : '',
+```
+
+**Result**:
+- Development: `localhost:3000/` (no basePath)
+- Production: `https://username.github.io/LeanAI/` (with basePath)
+
+---
+
+## Authentication Considerations
+
+### Current State
+- Login/Signup modals are **UI-only** (no backend functionality)
+- Forms have no state management or submission handlers
+- Static export **cannot** support:
+  - API routes for authentication
+  - Server-side session management
+  - Secure password hashing
+  - Database connections
+
+### Options for Adding Real Authentication
+
+**Option 1: External Auth Service** (Recommended for static sites)
+- Firebase Authentication
+- Supabase (includes PostgreSQL database)
+- Clerk
+- Auth0
+- **Pros**: Works with static export, secure, managed
+- **Cons**: Third-party dependency, potential costs
+
+**Option 2: Remove Static Export**
+- Remove `output: 'export'` from next.config.mjs
+- Deploy to Vercel/Netlify (not GitHub Pages)
+- Implement API routes in `app/api/`
+- Use Next.js middleware for protected routes
+- **Pros**: Full control, Next.js features available
+- **Cons**: Different hosting required, more complex setup
+
+**Option 3: Client-Only Auth** (NOT RECOMMENDED)
+- Store credentials in localStorage
+- **Pros**: Simple, works with static export
+- **Cons**: Zero security, easily bypassed, credentials exposed
+
+---
+
+## Next Steps for Future Development
+
+1. **Authentication**: Decide on authentication approach (Firebase, Supabase, or remove static export)
+2. **Form Functionality**: Add state management to login/signup modals
+3. **Inquiry Button**: Implement "문의하기" (Inquiry) functionality
+4. **Signup Button**: Connect "회원가입" link in login modal to signup modal
+5. **Mobile Signup**: Connect signup button in mobile menu
+6. **API Integration**: If removing static export, create API routes for:
+   - User authentication
+   - Contact form submissions
+   - Newsletter subscriptions
+7. **Database**: Set up database for user accounts and form submissions
+8. **Testing**: Add unit tests and E2E tests for critical paths
+9. **Analytics**: Add analytics tracking (Google Analytics, Plausible, etc.)
+10. **SEO**: Optimize meta tags, sitemap, robots.txt
 
